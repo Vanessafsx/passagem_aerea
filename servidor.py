@@ -1,21 +1,44 @@
-import grpc
 from concurrent import futures
-import vendas_pb2
-import vendas_pb2_grpc
+import grpc
+import vendaspassagens_pb2
+import vendaspassagens_pb2_grpc
 
-class PassagensService(vendas_pb2_grpc.PassagensServiceServicer):
+# Configurações do servidor
+PORT = 5000
+
+# Dicionário com as informações das passagens disponíveis
+passagens = {
+    'origem1': {
+        'destino1': {'data1': ['1a. classe', 'executivo', 'econômica'],
+                     'data2': ['1a. classe', 'executivo', 'econômica']},
+        'destino2': {'data1': ['1a. classe', 'executivo', 'econômica'],
+                     'data2': ['1a. classe', 'executivo', 'econômica']}},
+    'origem2': {
+        'destino3': {'data1': ['1a. classe', 'executivo', 'econômica'],
+                     'data2': ['1a. classe', 'executivo', 'econômica']},
+        'destino4': {'data1': ['1a. classe', 'executivo', 'econômica'],
+                     'data2': ['1a. classe', 'executivo', 'econômica']}}
+}
+
+class VendasPassagensServicer(vendaspassagens_pb2_grpc.VendasPassagensServicer):
+
     def VerificarDisponibilidade(self, request, context):
-        disponibilidade = True
-        categoria = 'econômica'
-        # TODO: Verificar a disponibilidade e a categoria da passagem
-        response = vendas_pb2.PassagemResponse(disponibilidade=disponibilidade, categoria=categoria)
-        return response
+        if request.destino in passagens[request.origem] and request.data in passagens[request.origem][request.destino]:
+            disponibilidade = True
+            categoria = passagens
+            [request.origem][request.destino][request.data]
+        else:
+            disponibilidade = False
+            categoria = []
+        return vendaspassagens_pb2.Resposta(disponibilidade=disponibilidade, categoria=categoria)
 
-server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-vendas_pb2_grpc.add_PassagensServiceServicer_to_server(PassagensService(), server)
+def start_server():
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+    vendaspassagens_pb2_grpc.add_VendasPassagensServicer_to_server(VendasPassagensServicer(), server)
+    server.add_insecure_port(f'[::]:{PORT}')
+    server.start()
+    print(f'Servidor iniciado na porta {PORT}')
+    server.wait_for_termination()
 
-#adicionando servidor a porta 3000
-server.add_insecure_port('[::]:3000')
-server.start()
-
-server.wait_for_termination()
+if __name__ == '__main__':
+    start_server()
