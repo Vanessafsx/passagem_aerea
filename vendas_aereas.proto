@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package vendas_aereas;
+
+enum Categoria {
+  ECONOMICA = 0;
+  EXECUTIVA = 1;
+  PRIMEIRA_CLASSE = 2;
+}
+
+message RequisicaoDisponibilidade {
+  string data_partida = 1;
+  string data_retorno = 2;
+  string origem = 3;
+  string destino = 4;
+}
+
+message RespostaDisponibilidade {
+  bool disponivel = 1;
+  Categoria categoria = 2;
+}
+
+service Vendas {
+  rpc VerificarDisponibilidade (RequisicaoDisponibilidade) returns (RespostaDisponibilidade);
+}

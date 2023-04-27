@@ -2,10 +2,10 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import vendaspassagens_pb2 as vendaspassagens__pb2
+import vendas_aereas_pb2 as vendas__aereas__pb2
 
 
-class VendasPassagensStub(object):
+class VendasStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -15,13 +15,13 @@ class VendasPassagensStub(object):
             channel: A grpc.Channel.
         """
         self.VerificarDisponibilidade = channel.unary_unary(
-                '/vendaspassagens.VendasPassagens/VerificarDisponibilidade',
-                request_serializer=vendaspassagens__pb2.Passagem.SerializeToString,
-                response_deserializer=vendaspassagens__pb2.Resposta.FromString,
+                '/vendas_aereas.Vendas/VerificarDisponibilidade',
+                request_serializer=vendas__aereas__pb2.RequisicaoDisponibilidade.SerializeToString,
+                response_deserializer=vendas__aereas__pb2.RespostaDisponibilidade.FromString,
                 )
 
 
-class VendasPassagensServicer(object):
+class VendasServicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def VerificarDisponibilidade(self, request, context):
@@ -31,21 +31,21 @@ class VendasPassagensServicer(object):
         raise NotImplementedError('Method not implemented!')
 
 
-def add_VendasPassagensServicer_to_server(servicer, server):
+def add_VendasServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'VerificarDisponibilidade': grpc.unary_unary_rpc_method_handler(
                     servicer.VerificarDisponibilidade,
-                    request_deserializer=vendaspassagens__pb2.Passagem.FromString,
-                    response_serializer=vendaspassagens__pb2.Resposta.SerializeToString,
+                    request_deserializer=vendas__aereas__pb2.RequisicaoDisponibilidade.FromString,
+                    response_serializer=vendas__aereas__pb2.RespostaDisponibilidade.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'vendaspassagens.VendasPassagens', rpc_method_handlers)
+            'vendas_aereas.Vendas', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
  # This class is part of an EXPERIMENTAL API.
-class VendasPassagens(object):
+class Vendas(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
@@ -59,8 +59,8 @@ class VendasPassagens(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/vendaspassagens.VendasPassagens/VerificarDisponibilidade',
-            vendaspassagens__pb2.Passagem.SerializeToString,
-            vendaspassagens__pb2.Resposta.FromString,
+        return grpc.experimental.unary_unary(request, target, '/vendas_aereas.Vendas/VerificarDisponibilidade',
+            vendas__aereas__pb2.RequisicaoDisponibilidade.SerializeToString,
+            vendas__aereas__pb2.RespostaDisponibilidade.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
